@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { middleware } from "../middleware/middleware";
+import { postSchema, postUpdateSchema } from "alpha788-blog-typecheck";
 
 interface Environment {
   Bindings: {
@@ -44,7 +45,6 @@ blog.get("/:id", middleware, async (c) => {
         id: postId,
       },
     });
-
     return c.json({ messgae: "Post found.", data: blog });
   } catch (e) {
     return c.json({ error: e });
@@ -58,8 +58,15 @@ blog.post("/", middleware, async (c) => {
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const body = await c.req.json();
+  const data = await c.req.json();
+  const typecheck = postSchema.safeParse(data);
+  if (!typecheck.success) {
+    return c.json({ messgae: typecheck.error.issues[0].message });
+  }
+
+  const body = typecheck.data;
   const userId = c.get("userId");
+
   try {
     const post = await prisma.post.create({
       data: {
@@ -69,12 +76,10 @@ blog.post("/", middleware, async (c) => {
         authorId: userId,
       },
     });
-
     if (!post) {
       c.status(402);
       return c.json({ error: "Something went wrong in Blog creation." });
     }
-
     return c.json({ message: "post blog", data: post });
   } catch (e) {
     return c.json({ error: e });
@@ -88,7 +93,13 @@ blog.put("/", middleware, async (c) => {
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const body = await c.req.json();
+  const data = await c.req.json();
+  const typecheck = postUpdateSchema.safeParse(data);
+  if (!typecheck.success) {
+    return c.json({ messgae: typecheck.error.issues[0].message });
+  }
+
+  const body = typecheck.data;
   const userId = c.get("userId");
 
   try {
@@ -103,7 +114,6 @@ blog.put("/", middleware, async (c) => {
         published: body.published,
       },
     });
-
     return c.json({ message: "Blog Updated.", data: update });
   } catch (e) {
     return c.json({ error: e });

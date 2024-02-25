@@ -2,7 +2,6 @@ import type { MiddlewareHandler } from "hono";
 import { verify } from "hono/jwt";
 
 export const middleware: MiddlewareHandler = async (c, next) => {
-  console.log("hello");
   const token = c.req.header("auth");
   if (!token) {
     c.status(403);
