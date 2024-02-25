@@ -1,9 +1,10 @@
 import { Hono } from "hono";
-import { decode, sign, verify } from "hono/jwt";
+import { sign } from "hono/jwt";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
+import { middleware } from "./middleware";
 
-const app = new Hono<{
+interface Environment {
   Bindings: {
     DATABASE_URL: string;
     JWT_SECRET: string;
@@ -11,24 +12,27 @@ const app = new Hono<{
   Variables: {
     userId: string;
   };
-}>();
+}
+const app = new Hono<Environment>();
 
 //middleware -------------------------------------------------------------
 
-app.use("/api/v1/blog/*", async (c, next) => {
-  const token = c.req.header("auth");
-  if (!token) {
-    c.status(403);
-    return c.json({ message: "Token expired or Not valid." });
-  }
-  const decodedToken = await verify(token, c.env.JWT_SECRET);
-  if (!decodedToken) {
-    c.status(402);
-    return c.json({ Message: "Unauthorized" });
-  }
-  c.set("userId", decodedToken.id);
-  await next();
-});
+//below is the example how to implement middle ware through same file.
+
+// app.use("/api/v1/blog/*", async (c, next) => {
+//   const token = c.req.header("auth");
+//   if (!token) {
+//     c.status(403);
+//     return c.json({ message: "Token Not Found" });
+//   }
+//   const decodedToken = await verify(token, c.env.JWT_SECRET);
+//   if (!decodedToken) {
+//     c.status(402);
+//     return c.json({ Message: "Unauthorized" });
+//   }
+//   c.set("userId", decodedToken.id);
+//   await next();
+// });
 
 //Signup routes -----------------------------------------------------------
 
@@ -48,10 +52,12 @@ app.post("/api/v1/signup", async (c) => {
     });
 
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-    return c.json({ message: "Signup successful.", token: jwt });
+    return c.json({ message: "Signup successful", token: jwt });
   } catch (e) {
     c.status(403);
-    return c.json({ error: "error while signing up" });
+    return c.json({
+      error: "Account with similar email or username is already",
+    });
   }
 });
 
@@ -85,16 +91,14 @@ app.post("/api/v1/signin", async (c) => {
 
 //All Blogs -------------------------------------------------------------------
 
-app.get("/api/v1/blog", async (c) => {
+app.get("/api/v1/blog", middleware, async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
 
   try {
     const allBlogs = await prisma.post.findMany();
-    console.log(allBlogs);
-
-    return c.json({ message: "All Blog.", data: allBlogs });
+    return c.json({ message: "All Blog", data: allBlogs });
   } catch (e) {
     return c.json({ error: e });
   }
@@ -102,7 +106,7 @@ app.get("/api/v1/blog", async (c) => {
 
 //Specific blog -------------------------------------------------------------------
 
-app.get("/api/v1/blog/:id", async (c) => {
+app.get("/api/v1/blog/:id", middleware, async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -123,20 +127,20 @@ app.get("/api/v1/blog/:id", async (c) => {
 
 //Add post-------------------------------------------------------------------------------
 
-app.post("/api/v1/blog", async (c) => {
+app.post("/api/v1/blog", middleware, async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
 
   const body = await c.req.json();
-  const authorId = c.get("userId");
+  const userId = c.get("userId");
   try {
     const post = await prisma.post.create({
       data: {
         title: body.title,
         content: body.content,
         published: body.published,
-        authorId: authorId,
+        authorId: userId,
       },
     });
 
@@ -153,19 +157,19 @@ app.post("/api/v1/blog", async (c) => {
 
 //Edit post ---------------------------------------------------------------------
 
-app.put("/api/v1/blog", async (c) => {
+app.put("/api/v1/blog", middleware, async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
 
   const body = await c.req.json();
-  const authorId = c.get("userId");
+  const userId = c.get("userId");
 
   try {
     const update = await prisma.post.update({
       where: {
         id: body.id,
-        authorId: authorId,
+        authorId: userId,
       },
       data: {
         title: body.title,
