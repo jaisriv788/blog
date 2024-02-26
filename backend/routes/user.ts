@@ -23,7 +23,10 @@ user.post("/signup", async (c) => {
   const data = await c.req.json();
   const typecheck = signupSchema.safeParse(data);
   if (!typecheck.success) {
-    return c.json({ messgae: typecheck.error.issues[0].message });
+    return c.json({
+      message: typecheck.error.issues[0].message,
+      status: false,
+    });
   }
 
   const body = typecheck.data;
@@ -37,11 +40,11 @@ user.post("/signup", async (c) => {
       },
     });
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-    return c.json({ message: "Signup successful", token: jwt });
+    return c.json({ message: "Signup successful.", token: jwt, status: true });
   } catch (e) {
-    c.status(403);
     return c.json({
-      error: "Account with similar email or username is already",
+      message: "Account with similar email already exist.",
+      status: false,
     });
   }
 });
@@ -56,7 +59,10 @@ user.post("/signin", async (c) => {
   const data = await c.req.json();
   const typecheck = signinSchema.safeParse(data);
   if (!typecheck.success) {
-    return c.json({ messgae: typecheck.error.issues[0].message });
+    return c.json({
+      message: typecheck.error.issues[0].message,
+      status: false,
+    });
   }
 
   const body = typecheck.data;
@@ -69,13 +75,12 @@ user.post("/signin", async (c) => {
       },
     });
     if (!user) {
-      return c.json({ message: "Something went wrong with signin route." });
+      return c.json({ message: "Either email or password is incorrect." });
     }
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-    return c.json({ message: "Signin Successful.", token: jwt });
+    return c.json({ message: "Signin Successful.", token: jwt, status: true });
   } catch (e) {
-    c.status(404);
-    return c.json({ message: "User not found." });
+    return c.json({ message: "User not found.", status: false });
   }
 });
 

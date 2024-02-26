@@ -25,9 +25,9 @@ blog.get("/", middleware, async (c) => {
 
   try {
     const allBlogs = await prisma.post.findMany();
-    return c.json({ message: "All Blog", data: allBlogs });
+    return c.json({ message: "All Blog", data: allBlogs, status: true });
   } catch (e) {
-    return c.json({ error: e });
+    return c.json({ message: e, status: false });
   }
 });
 
@@ -45,9 +45,9 @@ blog.get("/:id", middleware, async (c) => {
         id: postId,
       },
     });
-    return c.json({ messgae: "Post found.", data: blog });
+    return c.json({ messgae: "Post found.", data: blog, status: true });
   } catch (e) {
-    return c.json({ error: e });
+    return c.json({ message: e, status: false });
   }
 });
 
@@ -61,7 +61,10 @@ blog.post("/", middleware, async (c) => {
   const data = await c.req.json();
   const typecheck = postSchema.safeParse(data);
   if (!typecheck.success) {
-    return c.json({ messgae: typecheck.error.issues[0].message });
+    return c.json({
+      messgae: typecheck.error.issues[0].message,
+      status: false,
+    });
   }
 
   const body = typecheck.data;
@@ -80,9 +83,9 @@ blog.post("/", middleware, async (c) => {
       c.status(402);
       return c.json({ error: "Something went wrong in Blog creation." });
     }
-    return c.json({ message: "post blog", data: post });
+    return c.json({ message: "post blog", data: post, status: true });
   } catch (e) {
-    return c.json({ error: e });
+    return c.json({ message: e, status: false });
   }
 });
 
@@ -96,7 +99,10 @@ blog.put("/", middleware, async (c) => {
   const data = await c.req.json();
   const typecheck = postUpdateSchema.safeParse(data);
   if (!typecheck.success) {
-    return c.json({ messgae: typecheck.error.issues[0].message });
+    return c.json({
+      messgae: typecheck.error.issues[0].message,
+      status: false,
+    });
   }
 
   const body = typecheck.data;
@@ -114,9 +120,9 @@ blog.put("/", middleware, async (c) => {
         published: body.published,
       },
     });
-    return c.json({ message: "Blog Updated.", data: update });
+    return c.json({ message: "Blog Updated.", data: update, status: true });
   } catch (e) {
-    return c.json({ error: e });
+    return c.json({ message: e, status: false });
   }
 });
 
