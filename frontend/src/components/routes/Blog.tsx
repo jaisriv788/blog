@@ -1,7 +1,7 @@
 
 function Blog() {
   return (
-    <div>Blog</div>
+    <div className="pt-20">Blog</div>
   )
 }
 

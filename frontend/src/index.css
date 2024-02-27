@@ -74,3 +74,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+.my-bg{
+  background-image: url("./assets/1.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.h-l{
+  height: 100%;
+}
+
+.myfocus:focus-within{
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: black;
+}

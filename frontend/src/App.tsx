@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Routes, Route } from "react-router-dom";
 import Blogs from "./components/routes/Blogs";
 import Blog from "./components/routes/Blog";
+import CreateBlog from "./components/routes/CreateBlog";
 import Updateblog from "./components/routes/Updateblog";
 import Signup from "./components/routes/Signup";
 import Signin from "./components/routes/Signin";
@@ -12,6 +13,28 @@ import SuccessSignin from "@/components/ui/SuccessSignin";
 export default function Home() {
   const [successSignup, setSuccessSignup] = useState(false);
   const [successSignin, setSuccessSignin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("key");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("key");
+    if (isLoggedIn && !token) {
+      setIsLoggedIn(false);
+    }
+  }, [isLoggedIn]);
+
+  function handleSuccessfulSignin(token: string) {
+    localStorage.setItem("key", token);
+    setIsLoggedIn(true);
+    setSuccessSignin(true);
+    setTimeout(() => {
+      setSuccessSignin(false);
+    }, 1000);
+  }
 
   function handleSuccessfulSignup() {
     setSuccessSignup(true);
@@ -19,29 +42,32 @@ export default function Home() {
       setSuccessSignup(false);
     }, 1000);
   }
+  const navbar = useMemo(() => {
+    console.log("j");
+    return <Navbar handleNavbar={handleNavbar} isLoggedIn={isLoggedIn} />;
+  }, [isLoggedIn]);
 
-  function handleSuccessfulSignin() {
-    setSuccessSignin(true);
-    setTimeout(() => {
-      setSuccessSignin(false);
-    }, 1000);
+  function handleNavbar() {
+    localStorage.removeItem("key");
+    setIsLoggedIn(false);
   }
 
   return (
     <div className="bg-slate-200">
-      <Navbar />
+      {navbar}
       <Routes>
-        <Route path="/blogs" element={<Blogs />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/update" element={<Updateblog />} />
         <Route
-          path="/signup"
+          path="/"
           element={<Signup signupSuccess={handleSuccessfulSignup} />}
         />
         <Route
           path="/signin"
           element={<Signin signinSuccess={handleSuccessfulSignin} />}
         />
+        <Route path="/allblogs" element={<Blogs />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/createblog" element={<CreateBlog />} />
+        <Route path="/update" element={<Updateblog />} />
       </Routes>
       {successSignup && <SuccessSignup />}
       {successSignin && <SuccessSignin />}

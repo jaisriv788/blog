@@ -1,5 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Eye, EyeOff } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -8,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -16,7 +16,7 @@ import Error from "@/components/ui/Error";
 import { SigninType } from "alpha788-blog-typecheck";
 
 interface SigninProps {
-  signinSuccess: () => void;
+  signinSuccess: (token: string) => void;
 }
 
 const Signin: React.FC<SigninProps> = ({ signinSuccess }) => {
@@ -24,6 +24,7 @@ const Signin: React.FC<SigninProps> = ({ signinSuccess }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [hidden, setHidden] = useState(true);
 
   const navigate = useNavigate();
 
@@ -33,6 +34,10 @@ const Signin: React.FC<SigninProps> = ({ signinSuccess }) => {
 
   function passwordHandeler(e: ChangeEvent<HTMLInputElement>) {
     setPassword(e.target.value);
+  }
+
+  function handlePassword() {
+    setHidden(!hidden);
   }
 
   async function handleSignIn() {
@@ -46,8 +51,8 @@ const Signin: React.FC<SigninProps> = ({ signinSuccess }) => {
     );
 
     if (response.data.status) {
-      navigate("/blogs");
-      signinSuccess();
+      navigate("/allblogs");
+      signinSuccess(response.data.token);
     } else {
       setErrorMessage(response.data.message);
       setError(true);
@@ -58,8 +63,8 @@ const Signin: React.FC<SigninProps> = ({ signinSuccess }) => {
   }
 
   return (
-    <div className="h-screen flex flex-col justify-center items-center">
-      <Card className="w-[350px] h-fit ">
+    <div className="my-bg h-screen flex flex-col justify-center items-center">
+      <Card className="w-[350px] h-fit bg-transparent backdrop-blur-lg border-2 border-gray-400">
         <CardHeader className="flex items-center">
           <CardTitle className="font-bold underline">SignIn</CardTitle>
           <CardDescription>
@@ -73,19 +78,31 @@ const Signin: React.FC<SigninProps> = ({ signinSuccess }) => {
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  placeholder="Enter your email (e.g. demo@gmail.com)"
+                <input
+                  className="py-2 pl-3 w-full border-2 border-slate-200 rounded-lg"
+                  placeholder="e.g. demo@gmail.com"
                   onChange={emailHandeler}
+                  autoComplete="on"
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="passowrd">Password</Label>
-                <Input
-                  id="passowrd"
-                  placeholder="Enter your passowrd (e.g. Abc@1234)"
-                  onChange={passwordHandeler}
-                />
+                <div className="myfocus flex items-center border-2 border-slate-200 rounded-lg overflow-hidden">
+                  <input
+                    type={hidden ? "password" : "text"}
+                    className="py-2 pl-3 w-full outline-none"
+                    placeholder="e.g. Abc@1234"
+                    autoComplete="on"
+                    onChange={passwordHandeler}
+                  />
+                  <div className="w-min" onClick={handlePassword}>
+                    {hidden ? (
+                      <Eye className="mx-2" />
+                    ) : (
+                      <EyeOff className="mx-2" />
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </form>
@@ -97,7 +114,7 @@ const Signin: React.FC<SigninProps> = ({ signinSuccess }) => {
           </Button>
           <p>
             Do not have an account!{" "}
-            <Link to="/signup" className="underline text-blue-800">
+            <Link to="/" className="underline text-blue-800">
               SignUp
             </Link>
           </p>

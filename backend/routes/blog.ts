@@ -24,7 +24,20 @@ blog.get("/", middleware, async (c) => {
   }).$extends(withAccelerate());
 
   try {
-    const allBlogs = await prisma.post.findMany();
+    const allBlogs = await prisma.post.findMany({
+      where: {
+        published: true,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
     return c.json({ message: "All Blog", data: allBlogs, status: true });
   } catch (e) {
     return c.json({ message: e, status: false });

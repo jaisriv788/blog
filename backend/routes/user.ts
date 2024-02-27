@@ -32,15 +32,14 @@ user.post("/signup", async (c) => {
   const body = typecheck.data;
 
   try {
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email: body.email,
         name: body.name,
         password: body.password,
       },
     });
-    const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-    return c.json({ message: "Signup successful.", token: jwt, status: true });
+    return c.json({ message: "Signup successful.", status: true });
   } catch (e) {
     return c.json({
       message: "Account with similar email already exist.",

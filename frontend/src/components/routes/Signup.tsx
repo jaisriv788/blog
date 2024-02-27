@@ -1,4 +1,5 @@
 import { ChangeEvent, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -25,6 +25,7 @@ const Signup: React.FC<SignupProps> = ({ signupSuccess }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [hidden, setHidden] = useState(true);
 
   const navigate = useNavigate();
 
@@ -40,20 +41,24 @@ const Signup: React.FC<SignupProps> = ({ signupSuccess }) => {
     setPassword(e.target.value);
   }
 
+  function handlePassword() {
+    setHidden(!hidden);
+  }
+
   async function handleSignUp() {
-    
-    const body : SignupType = {email,name,password}
+    const body: SignupType = { email, name, password };
     const response = await axios.post(
       "https://blog-backend.jaisrivastava788.workers.dev/api/v1/signup",
       {
-        email : body.email,
+        email: body.email,
         name: body.name,
         password: body.password,
       }
     );
 
     if (response.data.status) {
-      navigate("/blogs");
+      console.log(response.data);
+      navigate("/signin");
       signupSuccess();
     } else {
       setErrorMessage(response.data.message);
@@ -65,8 +70,8 @@ const Signup: React.FC<SignupProps> = ({ signupSuccess }) => {
   }
 
   return (
-    <div className="h-screen flex flex-col justify-center items-center">
-      <Card className="w-[350px] h-fit">
+    <div className="my-bg h-screen flex flex-col justify-center items-center">
+      <Card className="w-[350px] h-fit bg-transparent backdrop-blur-lg border-2 border-gray-400">
         <CardHeader className="flex items-center">
           <CardTitle className="font-bold underline">SignUp</CardTitle>
           <CardDescription>
@@ -80,33 +85,43 @@ const Signup: React.FC<SignupProps> = ({ signupSuccess }) => {
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  placeholder="Enter your email (e.g. demo@gmail.com)"
+                <input
+                  className="py-2 pl-3 w-full border-2 border-slate-200 rounded-lg"
+                  placeholder="e.g. demo@gmail.com"
                   onChange={emailHandeler}
                 />
               </div>
-              <div className="flex flex-col space-y-1.5">
+              <div className=" flex flex-col space-y-1.5">
                 <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  placeholder="Enter your name (e.g. Jhon Doe)"
+                <input
+                  className="py-2 pl-3 w-full border-2 border-slate-200 rounded-lg"
+                  placeholder="e.g. Jhon Doe"
                   onChange={nameHandeler}
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="passowrd">Password</Label>
-                <Input
-                  id="passowrd"
-                  placeholder="Enter your passowrd (e.g. Abc@1234)"
-                  onChange={passwordHandeler}
-                />
+                <div className="myfocus flex items-center border-2 border-slate-200 rounded-lg overflow-hidden">
+                  <input
+                    type={hidden ? "password" : "text"}
+                    className="py-2 pl-3 w-full outline-none"
+                    placeholder="e.g. Abc@1234"
+                    onChange={passwordHandeler}
+                  />
+                  <div className="w-min" onClick={handlePassword}>
+                    {hidden ? (
+                      <Eye className="mx-2" />
+                    ) : (
+                      <EyeOff className="mx-2" />
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </form>
         </CardContent>
 
-        <CardFooter className="flex flex-col">
+        <CardFooter className="flex flex-col items-center">
           <Button className="w-full" onClick={handleSignUp}>
             SignUp
           </Button>
