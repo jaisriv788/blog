@@ -1,8 +1,5 @@
-
 function Blog() {
-  return (
-    <div className="pt-20">Blog</div>
-  )
+  return <div className="pt-20">Blog</div>;
 }
 
-export default Blog
+export default Blog;

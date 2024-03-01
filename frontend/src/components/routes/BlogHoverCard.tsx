@@ -12,7 +12,9 @@ interface Card {
 function BlogHoverCard(props: Card) {
   return (
     <HoverCard>
-      <HoverCardTrigger className="underline cursor-pointer">{props.name}</HoverCardTrigger>
+      <HoverCardTrigger className="underline cursor-pointer">
+        {props.name}
+      </HoverCardTrigger>
       <HoverCardContent>{props.email}</HoverCardContent>
     </HoverCard>
   );

@@ -47,7 +47,12 @@ function MyBlogs(props: HandleToken) {
     <div className="pt-20 h-screen flex flex-wrap justify-center sm:justify-evenly gap-5">
       {data.map((data) => {
         return (
-          <MyBlog key={data.id} title={data.title} content={data.content} />
+          <MyBlog
+            key={data.id}
+            id={data.id}
+            title={data.title}
+            content={data.content}
+          />
         );
       })}
     </div>

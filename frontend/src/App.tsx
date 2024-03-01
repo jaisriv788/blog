@@ -4,7 +4,6 @@ import Blogs from "./components/routes/Blogs";
 import Blog from "./components/routes/Blog";
 import MyBlogs from "./components/routes/MyBlogs";
 import CreateBlog from "./components/routes/CreateBlog";
-import Updateblog from "./components/routes/Updateblog";
 import Signup from "./components/routes/Signup";
 import Signin from "./components/routes/Signin";
 import Navbar from "@/components/ui/Navbar";
@@ -90,7 +89,6 @@ export default function Home() {
           path="/createblog"
           element={<CreateBlog handleToken={handleToken} />}
         />
-        <Route path="/update" element={<Updateblog />} />
       </Routes>
       {successSignup && <SuccessSignup />}
       {successSignin && <SuccessSignin />}
