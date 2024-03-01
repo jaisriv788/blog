@@ -37,10 +37,36 @@ blog.get("/", middleware, async (c) => {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     return c.json({ message: "All Blog", data: allBlogs, status: true });
   } catch (e) {
     return c.json({ message: e, status: false });
+  }
+});
+
+//My blogs
+
+blog.get("/myblogs", middleware, async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env?.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  try {
+    const id = c.get("userId");
+    if (!id) {
+      return c.json({ message: "You are not loggedin.", status: false });
+    }
+    const myblogs = await prisma.post.findMany({
+      where: {
+        authorId: id,
+      },
+    });
+    return c.json({ message: "Blogs fond.", status: true, data: myblogs });
+  } catch (e) {
+    return c.json({ message: "Error in finding your blogs.", status: false});
   }
 });
 
@@ -75,7 +101,7 @@ blog.post("/", middleware, async (c) => {
   const typecheck = postSchema.safeParse(data);
   if (!typecheck.success) {
     return c.json({
-      messgae: typecheck.error.issues[0].message,
+      message: typecheck.error.issues[0].message,
       status: false,
     });
   }

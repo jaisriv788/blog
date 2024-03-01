@@ -58,7 +58,7 @@ const Signin: React.FC<SigninProps> = ({ signinSuccess }) => {
       setError(true);
       setTimeout(() => {
         setError(false);
-      }, 2000);
+      }, 1500);
     }
   }
 

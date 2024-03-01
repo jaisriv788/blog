@@ -14,4 +14,5 @@ app.route("/", user);
 //all post or blog related route
 app.route("/blog", blog);
 
+
 export default app;

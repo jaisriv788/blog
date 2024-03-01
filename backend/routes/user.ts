@@ -76,7 +76,11 @@ user.post("/signin", async (c) => {
     if (!user) {
       return c.json({ message: "Either email or password is incorrect." });
     }
-    const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
+    const payload = {
+      id: user.id,
+      exp: Math.floor(Date.now() / 1000) +( 60 * 60),
+    };
+    const jwt = await sign(payload, c.env.JWT_SECRET);
     return c.json({ message: "Signin Successful.", token: jwt, status: true });
   } catch (e) {
     return c.json({ message: "User not found.", status: false });

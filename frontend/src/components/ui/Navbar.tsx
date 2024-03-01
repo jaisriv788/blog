@@ -58,6 +58,11 @@ function Navbar(props: Navbar) {
     navigate("/allblogs");
   }
 
+  function handleMyBlogs(e: any) {
+    e.preventDefault();
+    navigate("/myblogs");
+  }
+
   return (
     <div className="fixed w-screen bg-black text-white py-4 px-4 flex content-center justify-between">
       <Link
@@ -77,15 +82,32 @@ function Navbar(props: Navbar) {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleHome}>Home</DropdownMenuItem>
-              <DropdownMenuItem onClick={handleCreateBlog}>Create Blog</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleCreateBlog}>
+                Create Blog
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleMyBlogs}>
+                My Blogs
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
           <div className="mr-6 flex items-center gap-4">
-            <Link className=" hover:text-slate-300" to="/allblogs">Home</Link>
-            <Link className=" hover:text-slate-300" to="/createblog">Create Blog</Link>
-            <span className="cursor-pointer hover:text-slate-300" onClick={handleLogout}>Logout</span>
+            <Link className=" hover:text-slate-300" to="/allblogs">
+              Home
+            </Link>
+            <Link className=" hover:text-slate-300" to="/createblog">
+              Create Blog
+            </Link>
+            <Link className=" hover:text-slate-300" to="/myblogs">
+              My Blogs
+            </Link>
+            <span
+              className="cursor-pointer hover:text-slate-300"
+              onClick={handleLogout}
+            >
+              Logout
+            </span>
           </div>
         )
       ) : (

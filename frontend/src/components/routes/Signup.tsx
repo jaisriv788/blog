@@ -57,7 +57,6 @@ const Signup: React.FC<SignupProps> = ({ signupSuccess }) => {
     );
 
     if (response.data.status) {
-      console.log(response.data);
       navigate("/signin");
       signupSuccess();
     } else {
