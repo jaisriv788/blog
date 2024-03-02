@@ -85,6 +85,7 @@ const Signup: React.FC<SignupProps> = ({ signupSuccess }) => {
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="email">Email</Label>
                 <input
+                  id="email"
                   className="py-2 pl-3 w-full border-2 border-slate-200 rounded-lg"
                   placeholder="e.g. demo@gmail.com"
                   onChange={emailHandeler}
@@ -93,15 +94,17 @@ const Signup: React.FC<SignupProps> = ({ signupSuccess }) => {
               <div className=" flex flex-col space-y-1.5">
                 <Label htmlFor="name">Name</Label>
                 <input
+                  id="name"
                   className="py-2 pl-3 w-full border-2 border-slate-200 rounded-lg"
                   placeholder="e.g. Jhon Doe"
                   onChange={nameHandeler}
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="passowrd">Password</Label>
+                <Label htmlFor="password">Password</Label>
                 <div className="myfocus flex items-center border-2 border-slate-200 rounded-lg overflow-hidden">
                   <input
+                    id="password"
                     type={hidden ? "password" : "text"}
                     className="py-2 pl-3 w-full outline-none"
                     placeholder="e.g. Abc@1234"
