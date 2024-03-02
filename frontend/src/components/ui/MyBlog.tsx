@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Button } from "./button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -26,8 +25,29 @@ function MyBlog(props: BlogData) {
   const [previousTitle, setPreviousTitle] = useState("");
   const [previousContent, setPreviousContent] = useState("");
   const [isPublished, setIsPublished] = useState(false);
+  const [readMore, setReadMore] = useState(true);
 
-  function handleDelete() {}
+  function toggleReadMore() {
+    setReadMore(!readMore);
+  }
+
+  async function handleDelete() {
+    try {
+      const token = localStorage.getItem("key");
+      const response = await axios.delete(
+        `https://blog-backend.jaisrivastava788.workers.dev/api/v1/blog/${props.id}`,
+        {
+          headers: {
+            auth: token,
+          },
+        }
+      );
+      console.log(response);
+      location.reload();
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   async function handleUpdate() {
     try {
@@ -90,15 +110,39 @@ function MyBlog(props: BlogData) {
     <div className="w-10/12 sm:w-5/12 h-fit bg-white px-4 py-3 rounded-lg border-2 border-slate-300">
       <div className="font-bold text-2xl underline">{props.title}</div>
       <div className="text-pretty py-3">
-        {props.content.slice(0, 250)}
-        <Link to="/blog" className="text-sky-700">
-          ...read more
-        </Link>
+        {readMore ? props.content.slice(0, 250) : props.content}{" "}
+        <span
+          onClick={toggleReadMore}
+          className="text-sky-700 underline cursor-pointer"
+        >
+          {readMore ? "...read more" : "show less"}
+        </span>
       </div>
       <div className="flex gap-5">
-        <Button className="bg-red-500 hover:bg-red-700" onClick={handleDelete}>
-          Delete
-        </Button>
+        <Dialog>
+          <DialogTrigger className="bg-red-500 hover:bg-red-700 h-10 text-white px-4 rounded-md text-sm font-semibold">
+            Delete
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-red-600">Alert!</DialogTitle>
+              <DialogDescription>
+                This action will{" "}
+                <strong className="underline text-red-600">
+                  delete your Blog
+                </strong>
+                . If you proceed then you can click on delete button.
+              </DialogDescription>
+            </DialogHeader>
+            <Button
+              className="w-fit px-8 bg-red-500 hover:bg-red-700"
+              onClick={handleDelete}
+            >
+              Delete
+            </Button>
+          </DialogContent>
+        </Dialog>
+
         <Dialog>
           <DialogTrigger
             onClick={handleUpdate}

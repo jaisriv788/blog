@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Routes, Route } from "react-router-dom";
 import Blogs from "./components/routes/Blogs";
-import Blog from "./components/routes/Blog";
 import MyBlogs from "./components/routes/MyBlogs";
 import CreateBlog from "./components/routes/CreateBlog";
 import Signup from "./components/routes/Signup";
@@ -68,7 +67,7 @@ export default function Home() {
   }, [isLoggedIn]);
 
   return (
-    <div className=" h-full">
+    <div className="h-full flex flex-col">
       {navbar}
       <Routes>
         <Route
@@ -80,7 +79,6 @@ export default function Home() {
           element={<Signin signinSuccess={handleSuccessfulSignin} />}
         />
         <Route path="/allblogs" element={<Blogs handleToken={handleToken} />} />
-        <Route path="/blog" element={<Blog />} />
         <Route
           path="/myblogs"
           element={<MyBlogs handleToken={handleToken} />}

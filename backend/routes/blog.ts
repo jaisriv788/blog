@@ -16,9 +16,10 @@ interface Environment {
 
 const blog = new Hono<Environment>();
 
+blog.use("/*", middleware);
 //All Blogs -------------------------------------------------------------------
 
-blog.get("/", middleware, async (c) => {
+blog.get("/", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -49,7 +50,7 @@ blog.get("/", middleware, async (c) => {
 
 //My blogs
 
-blog.get("/myblogs", middleware, async (c) => {
+blog.get("/myblogs", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -66,13 +67,13 @@ blog.get("/myblogs", middleware, async (c) => {
     });
     return c.json({ message: "Blogs fond.", status: true, data: myblogs });
   } catch (e) {
-    return c.json({ message: "Error in finding your blogs.", status: false});
+    return c.json({ message: "Error in finding your blogs.", status: false });
   }
 });
 
 //Specific blog -------------------------------------------------------------------
 
-blog.get("/:id", middleware, async (c) => {
+blog.get("/:id", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -92,7 +93,7 @@ blog.get("/:id", middleware, async (c) => {
 
 //Add post-------------------------------------------------------------------------------
 
-blog.post("/", middleware, async (c) => {
+blog.post("/", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -130,7 +131,7 @@ blog.post("/", middleware, async (c) => {
 
 //Edit post ---------------------------------------------------------------------
 
-blog.put("/", middleware, async (c) => {
+blog.put("/", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -160,6 +161,26 @@ blog.put("/", middleware, async (c) => {
       },
     });
     return c.json({ message: "Blog Updated.", data: update, status: true });
+  } catch (e) {
+    return c.json({ message: e, status: false });
+  }
+});
+
+//delete specific post
+
+blog.delete("/:id", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env?.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const postId = c.req.param("id");
+  try {
+    const blog = await prisma.post.delete({
+      where: {
+        id: postId,
+      },
+    });
+    return c.json({ messgae: "Post deleted.", data: blog, status: true });
   } catch (e) {
     return c.json({ message: e, status: false });
   }

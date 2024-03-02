@@ -64,7 +64,7 @@ function Navbar(props: Navbar) {
   }
 
   return (
-    <div className="fixed w-screen bg-black text-white py-4 px-4 flex content-center justify-between">
+    <div className="fixed w-screen z-50 bg-black text-white py-4 px-4 flex content-center justify-between">
       <Link
         to={props.isLoggedIn ? "/allblogs" : "/signin"}
         className="text-3xl font-bold flex items-center gap-1"
