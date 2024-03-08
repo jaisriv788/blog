@@ -31,7 +31,7 @@ function Blogs(props: HandleToken) {
     const controller = new AbortController();
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("key");
+        const token = sessionStorage.getItem("key");
         const response = await axios.get(
           "https://blog-backend.jaisrivastava788.workers.dev/api/v1/blog",
           {

@@ -20,19 +20,19 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("key");
+    const token = sessionStorage.getItem("key");
     setIsLoggedIn(!!token);
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("key");
+    const token = sessionStorage.getItem("key");
     if (isLoggedIn && !token) {
       setIsLoggedIn(false);
     }
   }, [isLoggedIn]);
 
   function handleSuccessfulSignin(token: string) {
-    localStorage.setItem("key", token);
+    sessionStorage.setItem("key", token);
     setIsLoggedIn(true);
     setSuccessSignin(true);
     setTimeout(() => {
@@ -48,13 +48,13 @@ export default function Home() {
   }
 
   function handleNavbar() {
-    localStorage.removeItem("key");
+    sessionStorage.removeItem("key");
     setIsLoggedIn(false);
   }
 
   function handleToken() {
     navigate("/signin");
-    localStorage.removeItem("key");
+    sessionStorage.removeItem("key");
     setIsLoggedIn(false);
     setSession(true);
     setTimeout(() => {

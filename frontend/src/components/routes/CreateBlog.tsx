@@ -41,7 +41,7 @@ function CreateBlog(props: HandleToken) {
     const fetchData = async () => {
       try {
         const body: PostType = { title, content, published };
-        const token = localStorage.getItem("key");
+        const token = sessionStorage.getItem("key");
         const response = await axios.post(
           "https://blog-backend.jaisrivastava788.workers.dev/api/v1/blog",
           {

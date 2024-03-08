@@ -33,7 +33,7 @@ function MyBlog(props: BlogData) {
 
   async function handleDelete() {
     try {
-      const token = localStorage.getItem("key");
+      const token = sessionStorage.getItem("key");
       const response = await axios.delete(
         `https://blog-backend.jaisrivastava788.workers.dev/api/v1/blog/${props.id}`,
         {
@@ -51,7 +51,7 @@ function MyBlog(props: BlogData) {
 
   async function handleUpdate() {
     try {
-      const token = localStorage.getItem("key");
+      const token = sessionStorage.getItem("key");
       const response = await axios.get(
         `https://blog-backend.jaisrivastava788.workers.dev/api/v1/blog/${props.id}`,
         {
@@ -87,7 +87,7 @@ function MyBlog(props: BlogData) {
       content: previousContent,
       published: isPublished,
     };
-    const token = localStorage.getItem("key");
+    const token = sessionStorage.getItem("key");
     const response = await axios.put(
       "https://blog-backend.jaisrivastava788.workers.dev/api/v1/blog",
       {
