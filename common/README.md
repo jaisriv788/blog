@@ -5,7 +5,7 @@ This package provides validation schemas using [Zod](https://github.com/colinhac
 ## Installation
 
 ```bash
-npm install your-package-name
+npm i alpha788-blog-typecheck
 ```
 
 ## Exports
