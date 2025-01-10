@@ -1,24 +1,26 @@
-# Zod Schemas for Signup, Signin, and Posts
+# Zod Validation Schemas for User and Post Management
 
-This package provides validation schemas using [Zod](https://github.com/colinhacks/zod) for common operations such as user signup, signin, and managing posts. The schemas ensure data integrity and can be used in applications to validate incoming requests or form inputs.
+This package provides robust validation schemas using [Zod](https://zod.dev/). These schemas are designed to validate common use cases like user signup, signin, and managing posts. Using these schemas ensures data integrity and simplifies input validation in your applications.
 
 ## Installation
 
+Install the package using npm:
+
 ```bash
-npm i alpha788-blog-typecheck
+npm i alpha788-typecheck
 ```
 
-## Exports
+## Exports and Usage
 
 ### `signupSchema`
 
 #### Description
-`signupSchema` is a Zod object schema that validates the data for user signup.
+`signupSchema` validates data for user signup, ensuring the required fields are present and properly formatted.
 
 #### Fields:
-- `email`: Required, string.
-- `name`: Optional, string.
-- `password`: Required, string.
+- `email`: Required, string, must be a valid email.
+- `name`: Optional, string, converts to uppercase and trims whitespace.
+- `password`: Required, string, minimum length of 8 characters.
 
 #### Type:
 ```typescript
@@ -31,8 +33,8 @@ import { signupSchema, SignupType } from "your-package-name";
 
 const signupData = {
   email: "test@example.com",
-  password: "password123",
   name: "John Doe",
+  password: "securePassword",
 };
 
 const result = signupSchema.safeParse(signupData);
@@ -44,14 +46,16 @@ if (result.success) {
 }
 ```
 
+---
+
 ### `signinSchema`
 
 #### Description
-`signinSchema` validates the data for user signin.
+`signinSchema` validates data for user signin.
 
 #### Fields:
-- `email`: Required, string.
-- `password`: Required, string.
+- `email`: Required, string, must be a valid email.
+- `password`: Required, string, minimum length of 8 characters.
 
 #### Type:
 ```typescript
@@ -64,7 +68,7 @@ import { signinSchema, SigninType } from "your-package-name";
 
 const signinData = {
   email: "test@example.com",
-  password: "password123",
+  password: "securePassword",
 };
 
 const result = signinSchema.safeParse(signinData);
@@ -76,14 +80,16 @@ if (result.success) {
 }
 ```
 
+---
+
 ### `postSchema`
 
 #### Description
-`postSchema` validates the data for creating a post.
+`postSchema` validates data for creating a post.
 
 #### Fields:
-- `title`: Required, string.
-- `content`: Required, string.
+- `title`: Required, string, minimum length of 1 character.
+- `content`: Required, string, minimum length of 1 character.
 - `published`: Required, boolean.
 
 #### Type:
@@ -96,7 +102,7 @@ type PostType = z.infer<typeof postSchema>;
 import { postSchema, PostType } from "your-package-name";
 
 const postData = {
-  title: "New Post",
+  title: "My First Post",
   content: "This is the content of the post.",
   published: true,
 };
@@ -110,15 +116,17 @@ if (result.success) {
 }
 ```
 
+---
+
 ### `postUpdateSchema`
 
 #### Description
-`postUpdateSchema` validates the data for updating a post.
+`postUpdateSchema` validates data for updating a post.
 
 #### Fields:
-- `id`: Required, string.
-- `title`: Optional, string.
-- `content`: Optional, string.
+- `id`: Required, string, must not be empty.
+- `title`: Optional, string, minimum length of 1 character.
+- `content`: Optional, string, minimum length of 1 character.
 - `published`: Optional, boolean.
 
 #### Type:
@@ -144,6 +152,8 @@ if (result.success) {
 }
 ```
 
+---
+
 ## Summary
 
-This package provides robust Zod schemas for validating signup, signin, and post data. By using these schemas, you can ensure the correctness of your data and simplify validation logic in your application.
+This package simplifies input validation with ready-to-use Zod schemas for user and post management. Each schema is designed to handle specific use cases, ensuring your application receives valid and sanitized data.

@@ -1,6 +1,6 @@
 {
-  "name": "alpha788-blog-typecheck",
-  "version": "1.0.5",
+  "name": "alpha788-typecheck",
+  "version": "1.0.12",
   "description": "",
   "main": "./dist/index.js",
   "scripts": {
